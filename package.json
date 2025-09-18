@@ -23,6 +23,7 @@
     "docker:logs": "docker compose logs -f"
   },
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.31",
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/modifiers": "^9.0.0",
     "@dnd-kit/sortable": "^10.0.0",
@@ -56,6 +57,7 @@
     "@radix-ui/react-tooltip": "^1.2.8",
     "@tabler/icons-react": "^3.34.1",
     "@tanstack/react-table": "^8.21.3",
+    "ai": "^5.0.45",
     "better-auth": "^1.3.7",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
@@ -78,6 +80,7 @@
     "sonner": "^2.0.7",
     "tailwind-merge": "^3.3.1",
     "vaul": "^1.1.2",
+    "vercel-ai": "^0.0.0",
     "zod": "^4.1.3"
   },
   "devDependencies": {

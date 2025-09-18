@@ -1,0 +1,129 @@
+#!/bin/bash
+
+# Simple task manager script for the AI Shop project
+
+TASKS_FILE="documentation/tasks/tasks.json"
+
+# Read tasks from JSON file
+read_tasks() {
+    if [[ -f "$TASKS_FILE" ]]; then
+        cat "$TASKS_FILE"
+    else
+        echo "[]"
+    fi
+}
+
+# Write tasks to JSON file
+write_tasks() {
+    echo "$1" > "$TASKS_FILE"
+}
+
+# List all tasks
+list_tasks() {
+    echo "Available Tasks:"
+    echo "================"
+    local tasks=$(read_tasks)
+    echo "$tasks" | jq -r '.[] | "\(.id): \(.title) [\(.status)] (Est. \(.estimatedHours)h)"'
+}
+
+# Start a task
+start_task() {
+    local task_id=$1
+    local tasks=$(read_tasks)
+
+    # Update task status to in_progress
+    local updated_tasks=$(echo "$tasks" | jq --arg task_id "$task_id" '
+        map(if .id == $task_id then .status = "in_progress" else . end)
+    ')
+
+    if [[ "$updated_tasks" != "$tasks" ]]; then
+        write_tasks "$updated_tasks"
+        echo "Task '$task_id' started successfully!"
+    else
+        echo "Task '$task_id' not found!"
+    fi
+}
+
+# Complete a task
+complete_task() {
+    local task_id=$1
+    local description=$2
+    local tasks=$(read_tasks)
+
+    # Update task status to completed and add completion description
+    local updated_tasks=$(echo "$tasks" | jq --arg task_id "$task_id" --arg description "$description" '
+        map(if .id == $task_id then
+            .status = "completed" |
+            .completedAt = (now | todate) |
+            .completionDescription = $description
+        else . end)
+    ')
+
+    if [[ "$updated_tasks" != "$tasks" ]]; then
+        write_tasks "$updated_tasks"
+        echo "Task '$task_id' completed successfully!"
+    else
+        echo "Task '$task_id' not found!"
+    fi
+}
+
+# Cancel a task
+cancel_task() {
+    local task_id=$1
+    local reason=$2
+    local tasks=$(read_tasks)
+
+    # Update task status to cancelled
+    local updated_tasks=$(echo "$tasks" | jq --arg task_id "$task_id" --arg reason "$reason" '
+        map(if .id == $task_id then
+            .status = "cancelled" |
+            .cancelledAt = (now | todate) |
+            .cancellationReason = $reason
+        else . end)
+    ')
+
+    if [[ "$updated_tasks" != "$tasks" ]]; then
+        write_tasks "$updated_tasks"
+        echo "Task '$task_id' cancelled successfully!"
+    else
+        echo "Task '$task_id' not found!"
+    fi
+}
+
+# Main script logic
+case "$1" in
+    "list-tasks")
+        list_tasks
+        ;;
+    "start-task")
+        if [[ -z "$2" ]]; then
+            echo "Usage: $0 start-task <task_id>"
+            exit 1
+        fi
+        start_task "$2"
+        ;;
+    "complete-task")
+        if [[ -z "$2" || -z "$3" ]]; then
+            echo "Usage: $0 complete-task <task_id> \"description\""
+            exit 1
+        fi
+        complete_task "$2" "$3"
+        ;;
+    "cancel-task")
+        if [[ -z "$2" || -z "$3" ]]; then
+            echo "Usage: $0 cancel-task <task_id> \"reason\""
+            exit 1
+        fi
+        cancel_task "$2" "$3"
+        ;;
+    *)
+        echo "Usage: $0 {list-tasks|start-task|complete-task|cancel-task}"
+        echo ""
+        echo "Commands:"
+        echo "  list-tasks                    List all available tasks"
+        echo "  start-task <task_id>          Start a task"
+        echo "  complete-task <task_id> \"desc\"  Complete a task with description"
+        echo "  cancel-task <task_id> \"reason\"  Cancel a task with reason"
+        exit 1
+        ;;
+esac
