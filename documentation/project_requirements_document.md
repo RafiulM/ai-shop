@@ -1,117 +1,83 @@
-# Project Requirements Document: codeguide-starter
-
----
+# Project Requirements Document (PRD)
 
 ## 1. Project Overview
 
-The **codeguide-starter** project is a boilerplate web application that provides a ready-made foundation for any web project requiring secure user authentication and a post-login dashboard. It sets up the common building blocks—sign-up and sign-in pages, API routes to handle registration and login, and a simple dashboard interface driven by static data. By delivering this skeleton, it accelerates development time and ensures best practices are in place from day one.
+AI-Shop is a web-based e-commerce platform that combines a familiar shopping experience with powerful AI-driven personalization and discovery. Shoppers can browse a curated catalog of products, receive tailored recommendations based on their preferences and behavior, and enjoy an intuitive checkout flow. Behind the scenes, AI models analyze user interactions and product attributes to deliver real-time suggestions, upsells, and dynamic search results.
 
-This starter kit is being built to solve the friction developers face when setting up repeated common tasks: credential handling, session management, page routing, and theming. Key objectives include: 1) delivering a fully working authentication flow (registration & login), 2) providing a gated dashboard area upon successful login, 3) establishing a clear, maintainable project structure using Next.js and TypeScript, and 4) demonstrating a clean theming approach with global and section-specific CSS. Success is measured by having an end-to-end login journey in under 200 lines of code and zero runtime type errors.
-
----
+The primary goal is to increase conversion rates and customer satisfaction by reducing search friction and surfacing the most relevant items. Success will be measured by user engagement (time on site, pages per session), conversion rate improvements (cart additions and completed purchases), and repeat visit rate. By delivering a seamless, AI-enhanced shopping journey, AI-Shop aims to outperform standard online storefronts on both sales and user experience metrics.
 
 ## 2. In-Scope vs. Out-of-Scope
 
-### In-Scope (Version 1)
-- User registration (sign-up) form with validation
-- User login (sign-in) form with validation
-- Next.js API routes under `/api/auth/route.ts` handling:
-  - Credential validation
-  - Password hashing (e.g., bcrypt)
-  - Session creation or JWT issuance
-- Protected dashboard pages under `/dashboard`:
-  - `layout.tsx` wrapping dashboard content
-  - `page.tsx` rendering static data from `data.json`
-- Global application layout in `/app/layout.tsx`
-- Basic styling via `globals.css` and `dashboard/theme.css`
-- TypeScript strict mode enabled
+**In-Scope (Version 1):**
+- User authentication (sign up, login, password reset) via email.
+- Product catalog browsing with categories, filters, and search.
+- AI-powered product recommendations on homepage, product pages, and cart.
+- Shopping cart management (add, remove, update quantity).
+- Checkout flow with payment integration (Stripe).
+- Order confirmation page and email notification.
+- Admin dashboard for product CRUD (Create, Read, Update, Delete) and order overview.
+- Basic analytics: track page views, clicks, and purchases.
 
-### Out-of-Scope (Later Phases)
-- Integration with a real database (PostgreSQL, MongoDB, etc.)
-- Advanced authentication flows (password reset, email verification, MFA)
-- Role-based access control (RBAC)
-- Multi-tenant or white-label theming
-- Unit, integration, or end-to-end testing suites
-- CI/CD pipeline and production deployment scripts
-
----
+**Out-of-Scope (Phase 2+):**
+- Social login (Google, Facebook, etc.)
+- Wishlist, reviews, and ratings
+- Advanced inventory management (warehousing, supplier integrations)
+- Multi-currency and multi-language support
+- Mobile app (native iOS/Android)
+- Third-party marketplace integrations (eBay, Amazon)
 
 ## 3. User Flow
 
-A new visitor lands on the root URL and sees a welcome page with options to **Sign Up** or **Sign In**. If they choose Sign Up, they fill in their email, password, and hit “Create Account.” The form submits to `/api/auth/route.ts`, which hashes the password, creates a new user session or token, and redirects them to the dashboard. If any input is invalid, an inline error message explains the issue (e.g., “Password too short”).
+A visitor lands on AI-Shop’s homepage and sees a hero banner with featured products and a personalized recommendation carousel powered by AI. If they’re new, they can click “Sign Up” to create an account; returning users log in. Once authenticated, the user can browse categories from the top navigation or type keywords into the search bar. As they type, the search field shows real-time AI-driven suggestions for products.
 
-Once authenticated, the user is taken to the `/dashboard` route. Here they see a sidebar or header defined by `dashboard/layout.tsx`, and the main panel pulls in static data from `data.json`. They can log out (if that control is present), but otherwise their entire session is managed by server-side cookies or tokens. Returning users go directly to Sign In, submit credentials, and upon success they land back on `/dashboard`. Any unauthorized access to `/dashboard` redirects back to Sign In.
-
----
+After finding a product, the user clicks into its detail page, views images, description, price, and an “Up next” recommendation strip of complementary items. They add items to the cart, which slides in from the side showing a summary. When ready, they click “Checkout,” fill in shipping details, and enter payment information via Stripe. Upon confirmation, they see an order summary screen and receive an email with order details. Admins log in to a separate dashboard to add new products, update inventory, and monitor orders.
 
 ## 4. Core Features
 
-- **Sign-Up Page (`/app/sign-up/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Sign-In Page (`/app/sign-in/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Authentication API (`/app/api/auth/route.ts`)**: Handles both registration and login based on HTTP method, integrates password hashing (bcrypt) and session or JWT logic.
-- **Global Layout (`/app/layout.tsx` + `globals.css`)**: Shared header, footer, and CSS resets across all pages.
-- **Dashboard Layout (`/app/dashboard/layout.tsx` + `dashboard/theme.css`)**: Sidebar or top nav for authenticated flows, section-specific styling.
-- **Dashboard Page (`/app/dashboard/page.tsx`)**: Reads `data.json`, renders it as cards or tables.
-- **Static Data Source (`/app/dashboard/data.json`)**: Example dataset to demo dynamic rendering.
-- **TypeScript Configuration**: `tsconfig.json` with strict mode and path aliases (if any).
-
----
+- **Authentication**: Email/password signup, login, forgot-password flow.
+- **Product Catalog**: Category listing, pagination, filter by price/brand/tag.
+- **Search**: Instant, AI-augmented search results with typo tolerance.
+- **AI Recommendations**: Personalized carousels on homepage, product pages, and cart.
+- **Shopping Cart**: Add/remove items, update quantities, cart persistence.
+- **Checkout**: Multi-step form for shipping, payment (Stripe), order review.
+- **Order Confirmation**: On-screen confirmation with order summary and email.
+- **Admin Dashboard**: Product CRUD, view orders, basic order status updates.
+- **Analytics Tracking**: Page views, click events, cart adds, purchases.
 
 ## 5. Tech Stack & Tools
 
-- **Framework**: Next.js (App Router) for file-based routing, SSR/SSG, and API routes.
-- **Language**: TypeScript for type safety.
-- **UI Library**: React 18 for component-based UI.
-- **Styling**: Plain CSS via `globals.css` (global reset) and `theme.css` (sectional styling). Can easily migrate to CSS Modules or Tailwind in the future.
-- **Backend**: Node.js runtime provided by Next.js API routes.
-- **Password Hashing**: bcrypt (npm package).
-- **Session/JWT**: NextAuth.js or custom JWT logic (to be decided in implementation).
-- **IDE & Dev Tools**: VS Code with ESLint, Prettier extensions. Optionally, Cursor.ai for AI-assisted coding.
-
----
+- **Frontend**: Next.js (React) for server-side rendering, Tailwind CSS for styling.
+- **Backend**: Node.js with Express framework.
+- **Database**: PostgreSQL for relational data (users, orders, products).
+- **AI & Search**: OpenAI GPT-4 (Recommendations API) or in-house model; Pinecone (vector DB) for semantic search.
+- **Payments**: Stripe API integration.
+- **Email**: SendGrid or AWS SES for transactional emails.
+- **Hosting/Deployment**: Vercel (frontend), Heroku or AWS ECS (backend).
+- **Dev Tools**: VS Code, GitHub Actions CI/CD, ESLint, Prettier.
 
 ## 6. Non-Functional Requirements
 
-- **Performance**: Initial page load under 200 ms on a standard broadband connection. API responses under 300 ms.
-- **Security**:
-  - HTTPS only in production.
-  - Proper CORS, CSRF protection for API routes.
-  - Secure password storage (bcrypt with salt).
-  - No credentials or secrets checked into version control.
-- **Scalability**: Structure must support adding database integration, caching layers, and advanced auth flows without rewiring core app.
-- **Usability**: Forms should give real-time feedback on invalid input. Layout must be responsive (mobile > 320 px).
-- **Maintainability**: Code must adhere to TypeScript strict mode. Linting & formatting enforced by ESLint/Prettier.
-
----
+- **Performance**: Page load under 2 seconds on 3G; AI recommendation responses under 300ms.
+- **Security**: HTTPS everywhere, OWASP Top 10 compliance, hashed passwords (bcrypt).
+- **Scalability**: Support 10k daily active users initially, with auto-scaling backend.
+- **Availability**: 99.9% uptime SLA.
+- **Usability**: WCAG AA accessibility compliance; mobile-responsive design.
 
 ## 7. Constraints & Assumptions
 
-- **No Database**: Dashboard uses only `data.json`; real database integration is deferred.
-- **Node Version**: Requires Node.js >= 14.
-- **Next.js Version**: Built on Next.js 13+ App Router.
-- **Authentication**: Assumes availability of bcrypt or NextAuth.js at implementation time.
-- **Hosting**: Targets serverless or Node.js-capable hosting (e.g., Vercel, Netlify).
-- **Browser Support**: Modern evergreen browsers; no IE11 support required.
-
----
+- Rely on OpenAI GPT-4 API limits and pricing—assume 100k monthly recommendation calls.
+- Initial product catalog size under 5,000 items.
+- Single region deployment (US East) for Phase 1.
+- Users will have modern browsers with JavaScript enabled.
 
 ## 8. Known Issues & Potential Pitfalls
 
-- **Static Data Limitation**: `data.json` is only for demo. A real API or database will be needed to avoid stale data.
-  *Mitigation*: Define a clear interface for data fetching so swapping to a live endpoint is trivial.
+- **API Rate Limits**: Hitting GPT-4 rate caps may slow recommendations. Mitigation: implement caching layer with Redis.
+- **Data Privacy**: Storing user behavior needs clear privacy policy. Quick fix: anonymize logs and rotate after 90 days.
+- **Search Relevance**: AI search results may drift. Mitigation: provide manual fallback filters and regular model fine-tuning.
+- **Payment Failures**: Edge cases (expired cards, declined payments). Solution: display clear error messages and retry options.
 
-- **Global CSS Conflicts**: Using global styles can lead to unintended overrides.
-  *Mitigation*: Plan to migrate to CSS Modules or utility-first CSS in Phase 2.
-
-- **API Route Ambiguity**: Single `/api/auth/route.ts` handling both sign-up and sign-in could get complex.
-  *Mitigation*: Clearly branch on HTTP method (`POST /register` vs. `POST /login`) or split into separate files.
-
-- **Lack of Testing**: No test suite means regressions can slip in.
-  *Mitigation*: Build a minimal Jest + React Testing Library setup in an early iteration.
-
-- **Error Handling Gaps**: Client and server must handle edge cases (network failures, malformed input).
-  *Mitigation*: Define a standard error response schema and show user-friendly messages.
 
 ---
 
-This PRD should serve as the single source of truth for the AI model or any developer generating the next set of technical documents: Tech Stack Doc, Frontend Guidelines, Backend Structure, App Flow, File Structure, and IDE Rules. It contains all functional and non-functional requirements with no ambiguity, enabling seamless downstream development.
+*This PRD is designed to be the single source of truth for AI-Shop’s initial version. Subsequent documents (tech stack deep dive, UI guidelines, backend architecture) should reference these requirements directly.*

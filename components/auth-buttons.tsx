@@ -137,13 +137,13 @@ export function HeroAuthButtons() {
 
   return (
     <div className="flex flex-col sm:flex-row gap-4 justify-center">
-      <Button asChild size="lg" className="text-base px-8 py-3">
+      <Button asChild size="lg" className="text-base px-8 py-3 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700">
         <Link href="/sign-up">
           <UserPlus className="mr-2 h-5 w-5" />
-          Get Started
+          Get Started Free
         </Link>
       </Button>
-      <Button asChild variant="outline" size="lg" className="text-base px-8 py-3">
+      <Button asChild variant="outline" size="lg" className="text-base px-8 py-3 border-2 hover:bg-blue-50 dark:hover:bg-blue-900/20">
         <Link href="/sign-in">
           <LogIn className="mr-2 h-5 w-5" />
           Sign In
