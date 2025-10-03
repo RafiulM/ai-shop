@@ -19,9 +19,9 @@ const parkinsans = Parkinsans({
 });
 
 export const metadata: Metadata = {
-  title: "Codeguide Starter Fullstack",
+  title: "AI Shop - Launch Your AI-Powered Store in Minutes",
   description:
-    "A modern Next.js starter with TypeScript, TailwindCSS, shadcn/ui, Better Auth, and Drizzle ORM",
+    "Transform your e-commerce vision into reality with AI Shop. Create professional online stores in under 15 minutes using cutting-edge AI technology. Start your intelligent e-commerce journey today.",
 };
 
 export default function RootLayout({
