@@ -1,117 +1,85 @@
-# Project Requirements Document: codeguide-starter
-
----
+# Project Requirements Document (PRD) for AI-Shop
 
 ## 1. Project Overview
+AI-Shop is an all-in-one, AI-powered e-commerce platform designed to help small business owners and solopreneurs launch online stores with minimal effort. Instead of manually writing product descriptions, uploading images, and fiddling with pricing, merchants provide a few basic inputs (like product name and category), and AI-Shop automatically creates compelling product descriptions, eye-catching images, and pricing suggestions. This streamlines store setup and ongoing catalog management, so store owners can focus on marketing and sales rather than tedious content creation.
 
-The **codeguide-starter** project is a boilerplate web application that provides a ready-made foundation for any web project requiring secure user authentication and a post-login dashboard. It sets up the common building blocks—sign-up and sign-in pages, API routes to handle registration and login, and a simple dashboard interface driven by static data. By delivering this skeleton, it accelerates development time and ensures best practices are in place from day one.
-
-This starter kit is being built to solve the friction developers face when setting up repeated common tasks: credential handling, session management, page routing, and theming. Key objectives include: 1) delivering a fully working authentication flow (registration & login), 2) providing a gated dashboard area upon successful login, 3) establishing a clear, maintainable project structure using Next.js and TypeScript, and 4) demonstrating a clean theming approach with global and section-specific CSS. Success is measured by having an end-to-end login journey in under 200 lines of code and zero runtime type errors.
-
----
+The key purpose is to remove the biggest pain points of running an online shop: content creation and product listing. Success for the first version will mean merchants can sign up, launch a basic storefront with at least 10 AI-generated products in under 15 minutes, and process their first test order end-to-end. We’ll measure success by onboarding time, user satisfaction scores, and the number of products created via AI tools.
 
 ## 2. In-Scope vs. Out-of-Scope
 
-### In-Scope (Version 1)
-- User registration (sign-up) form with validation
-- User login (sign-in) form with validation
-- Next.js API routes under `/api/auth/route.ts` handling:
-  - Credential validation
-  - Password hashing (e.g., bcrypt)
-  - Session creation or JWT issuance
-- Protected dashboard pages under `/dashboard`:
-  - `layout.tsx` wrapping dashboard content
-  - `page.tsx` rendering static data from `data.json`
-- Global application layout in `/app/layout.tsx`
-- Basic styling via `globals.css` and `dashboard/theme.css`
-- TypeScript strict mode enabled
+### In-Scope (Version 1.0)
+- User account creation and authentication (email/password, OAuth).
+- Merchant dashboard for basic store setup (store name, logo, theme).
+- Product management: create, edit, delete products.
+- AI-driven product description generation (via GPT-4).
+- AI-driven product image generation (via Stable Diffusion API).
+- Shopping cart, checkout flow, and Stripe payment integration.
+- Order confirmation emails and basic order history view.
+- Basic storefront: product listing page, product detail page.
+- Responsive web design for desktop and mobile.
 
-### Out-of-Scope (Later Phases)
-- Integration with a real database (PostgreSQL, MongoDB, etc.)
-- Advanced authentication flows (password reset, email verification, MFA)
-- Role-based access control (RBAC)
-- Multi-tenant or white-label theming
-- Unit, integration, or end-to-end testing suites
-- CI/CD pipeline and production deployment scripts
-
----
+### Out-of-Scope (Phase 2+)
+- Multi-currency or international tax calculations.
+- Advanced marketing tools (abandoned cart recovery, email campaigns).
+- Reviews & rating system.
+- Affiliate or multi-vendor marketplace features.
+- Detailed analytics beyond simple sales numbers.
+- Native mobile apps (iOS/Android).
 
 ## 3. User Flow
+When a merchant visits the site, they land on the home page with a clear call-to-action to “Get Started.” They click it and are guided through a signup screen (email or OAuth). After verifying their account, they’re taken to the merchant dashboard. Here, they enter store details (name, logo upload, select a color theme) and click “Create Store.” Next, they click “Add Product,” enter a product name and category, and hit “Generate.” The AI module produces a description, suggested price, and placeholder image. The merchant reviews or edits these fields, uploads a real photo if desired, and publishes the product. They repeat until their catalog is ready.
 
-A new visitor lands on the root URL and sees a welcome page with options to **Sign Up** or **Sign In**. If they choose Sign Up, they fill in their email, password, and hit “Create Account.” The form submits to `/api/auth/route.ts`, which hashes the password, creates a new user session or token, and redirects them to the dashboard. If any input is invalid, an inline error message explains the issue (e.g., “Password too short”).
-
-Once authenticated, the user is taken to the `/dashboard` route. Here they see a sidebar or header defined by `dashboard/layout.tsx`, and the main panel pulls in static data from `data.json`. They can log out (if that control is present), but otherwise their entire session is managed by server-side cookies or tokens. Returning users go directly to Sign In, submit credentials, and upon success they land back on `/dashboard`. Any unauthorized access to `/dashboard` redirects back to Sign In.
-
----
+Once products exist, shoppers visiting the store see a clean, responsive homepage showing featured items. They can click on any product to view details, adjust quantity, and add it to the cart. The cart page lists items, totals, and a “Checkout” button. At checkout, guests or logged-in customers fill in shipping and payment details. Stripe processes the payment, and both buyer and merchant receive confirmation emails. The merchant can view recent orders and shipping status in their dashboard’s “Orders” section.
 
 ## 4. Core Features
-
-- **Sign-Up Page (`/app/sign-up/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Sign-In Page (`/app/sign-in/page.tsx`)**: Form fields for email & password, client-side validation, POST to `/api/auth`.
-- **Authentication API (`/app/api/auth/route.ts`)**: Handles both registration and login based on HTTP method, integrates password hashing (bcrypt) and session or JWT logic.
-- **Global Layout (`/app/layout.tsx` + `globals.css`)**: Shared header, footer, and CSS resets across all pages.
-- **Dashboard Layout (`/app/dashboard/layout.tsx` + `dashboard/theme.css`)**: Sidebar or top nav for authenticated flows, section-specific styling.
-- **Dashboard Page (`/app/dashboard/page.tsx`)**: Reads `data.json`, renders it as cards or tables.
-- **Static Data Source (`/app/dashboard/data.json`)**: Example dataset to demo dynamic rendering.
-- **TypeScript Configuration**: `tsconfig.json` with strict mode and path aliases (if any).
-
----
+- **Authentication & User Management**: Email/password + OAuth (Google, Facebook).
+- **Storefront Builder**: Basic theming (color, logo), auto-generated product pages.
+- **Product Catalog**: CRUD operations, category tagging, AI suggestions.
+- **AI Content Generation**: 
+  - Text: OpenAI GPT-4 for product descriptions.
+  - Images: Stable Diffusion API for custom visuals.
+- **Pricing Suggestions**: AI price recommendation based on category.
+- **Shopping Cart & Checkout**: Persistent cart, guest checkout.
+- **Payment Integration**: Stripe for credit card processing.
+- **Order Management**: Email notifications, order history view.
 
 ## 5. Tech Stack & Tools
-
-- **Framework**: Next.js (App Router) for file-based routing, SSR/SSG, and API routes.
-- **Language**: TypeScript for type safety.
-- **UI Library**: React 18 for component-based UI.
-- **Styling**: Plain CSS via `globals.css` (global reset) and `theme.css` (sectional styling). Can easily migrate to CSS Modules or Tailwind in the future.
-- **Backend**: Node.js runtime provided by Next.js API routes.
-- **Password Hashing**: bcrypt (npm package).
-- **Session/JWT**: NextAuth.js or custom JWT logic (to be decided in implementation).
-- **IDE & Dev Tools**: VS Code with ESLint, Prettier extensions. Optionally, Cursor.ai for AI-assisted coding.
-
----
+- **Frontend**: Next.js (React), Tailwind CSS for styling.
+- **Backend**: Node.js with Express or NestJS.
+- **Database**: PostgreSQL (hosted via Supabase).
+- **Authentication**: Supabase Auth (email + OAuth).
+- **AI Services**:
+  - OpenAI GPT-4 API for text.
+  - Stability AI’s Stable Diffusion API for images.
+- **Payments**: Stripe API.
+- **Email Service**: SendGrid or Mailgun for transactional emails.
+- **Hosting & Deployment**: Vercel (frontend) and Heroku or DigitalOcean (backend).
+- **Developer Tools**: VSCode, GitHub Actions for CI/CD.
 
 ## 6. Non-Functional Requirements
-
-- **Performance**: Initial page load under 200 ms on a standard broadband connection. API responses under 300 ms.
+- **Performance**: 
+  - Page load time under 2 seconds on 3G mobile.
+  - AI generation response within 5 seconds.
 - **Security**:
-  - HTTPS only in production.
-  - Proper CORS, CSRF protection for API routes.
-  - Secure password storage (bcrypt with salt).
-  - No credentials or secrets checked into version control.
-- **Scalability**: Structure must support adding database integration, caching layers, and advanced auth flows without rewiring core app.
-- **Usability**: Forms should give real-time feedback on invalid input. Layout must be responsive (mobile > 320 px).
-- **Maintainability**: Code must adhere to TypeScript strict mode. Linting & formatting enforced by ESLint/Prettier.
-
----
+  - SSL everywhere (HTTPS).
+  - PCI DSS compliance for payments (via Stripe).
+  - Data encryption at rest and in transit.
+- **Scalability**: Support up to 1,000 concurrent store visits in V1.
+- **Usability**: Simple onboarding wizard; mobile-first responsive design.
+- **Availability**: 99.9% uptime SLA for core features.
 
 ## 7. Constraints & Assumptions
-
-- **No Database**: Dashboard uses only `data.json`; real database integration is deferred.
-- **Node Version**: Requires Node.js >= 14.
-- **Next.js Version**: Built on Next.js 13+ App Router.
-- **Authentication**: Assumes availability of bcrypt or NextAuth.js at implementation time.
-- **Hosting**: Targets serverless or Node.js-capable hosting (e.g., Vercel, Netlify).
-- **Browser Support**: Modern evergreen browsers; no IE11 support required.
-
----
+- We assume API keys for OpenAI and Stability AI will be available and within usage limits.
+- Merchants have basic familiarity with uploading images and choosing color themes.
+- Stripe will handle all payment compliance; we won’t store raw card data.
+- Initial hosting budget limits total API calls and concurrent AI image generations.
 
 ## 8. Known Issues & Potential Pitfalls
-
-- **Static Data Limitation**: `data.json` is only for demo. A real API or database will be needed to avoid stale data.
-  *Mitigation*: Define a clear interface for data fetching so swapping to a live endpoint is trivial.
-
-- **Global CSS Conflicts**: Using global styles can lead to unintended overrides.
-  *Mitigation*: Plan to migrate to CSS Modules or utility-first CSS in Phase 2.
-
-- **API Route Ambiguity**: Single `/api/auth/route.ts` handling both sign-up and sign-in could get complex.
-  *Mitigation*: Clearly branch on HTTP method (`POST /register` vs. `POST /login`) or split into separate files.
-
-- **Lack of Testing**: No test suite means regressions can slip in.
-  *Mitigation*: Build a minimal Jest + React Testing Library setup in an early iteration.
-
-- **Error Handling Gaps**: Client and server must handle edge cases (network failures, malformed input).
-  *Mitigation*: Define a standard error response schema and show user-friendly messages.
+- **AI Hallucinations**: GPT-4 may generate inaccurate descriptions; provide merchant edit screen.
+- **API Rate Limits**: OpenAI or Stable Diffusion limits could slow product creation; implement retry logic and queue requests.
+- **Image Quality Variance**: Generated images may not match merchant expectations; allow direct image uploads as fallback.
+- **Latency Spikes**: AI calls could introduce delays; show loading indicators and progress bars.
+- **Data Privacy**: Ensure merchant data isn’t accidentally exposed between stores; strictly separate data by tenant ID.
 
 ---
-
-This PRD should serve as the single source of truth for the AI model or any developer generating the next set of technical documents: Tech Stack Doc, Frontend Guidelines, Backend Structure, App Flow, File Structure, and IDE Rules. It contains all functional and non-functional requirements with no ambiguity, enabling seamless downstream development.
+This PRD lays out every essential detail for AI-Shop’s first version. It’s written so an AI-driven documentation pipeline can take it and generate clear technical specs, frontend guidelines, backend structures, and deployment plans without any guesswork.
