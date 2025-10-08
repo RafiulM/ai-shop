@@ -19,9 +19,38 @@ const parkinsans = Parkinsans({
 });
 
 export const metadata: Metadata = {
-  title: "Codeguide Starter Fullstack",
+  title: "AI Shop - Launch Your AI-Powered Store in Minutes",
   description:
-    "A modern Next.js starter with TypeScript, TailwindCSS, shadcn/ui, Better Auth, and Drizzle ORM",
+    "Transform your e-commerce vision into reality with AI Shop. Create professional online stores in under 15 minutes using cutting-edge AI technology. Start your intelligent e-commerce journey today.",
+  keywords: "AI e-commerce, online store builder, artificial intelligence, e-commerce platform, store creation, AI-powered shopping",
+  authors: [{ name: "AI Shop Team" }],
+  creator: "AI Shop",
+  publisher: "AI Shop",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://ai-shop.com",
+    title: "AI Shop - Launch Your AI-Powered Store in Minutes",
+    description: "Transform your e-commerce vision into reality with AI Shop. Create professional online stores in under 15 minutes using cutting-edge AI technology.",
+    siteName: "AI Shop",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "AI Shop - Launch Your AI-Powered Store in Minutes",
+    description: "Transform your e-commerce vision into reality with AI Shop. Create professional online stores in under 15 minutes using cutting-edge AI technology.",
+    creator: "@aishop",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      'max-video-preview': -1,
+      'max-image-preview': 'large',
+      'max-snippet': -1,
+    },
+  },
 };
 
 export default function RootLayout({

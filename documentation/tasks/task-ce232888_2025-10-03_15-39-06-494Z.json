@@ -1,0 +1,50 @@
+[
+  {
+    "title": "Create Hero Section Component",
+    "description": "Design and implement a new HeroSection React component with compelling headline, value proposition, and CTA button for the AI-Shop landing page",
+    "details": "Create a new file at `components/landing/hero-section.tsx` that includes: a captivating headline highlighting AI-powered e-commerce capabilities, a concise value proposition explaining how merchants can launch stores in under 15 minutes, a prominent 'Get Started' CTA button using the existing Button component from `components/ui/`, and a responsive layout using Tailwind CSS. The component should use semantic HTML with proper heading hierarchy (h1 for main headline) and include proper TypeScript interfaces for any props. Implement a clean, modern design that aligns with the AI-Shop brand identity.",
+    "status": "pending",
+    "test_strategy": "Create unit tests using Jest and React Testing Library to verify component renders correctly, CTA button is clickable and accessible, and responsive classes are applied. Test different viewport sizes to ensure mobile-first responsive design works properly.",
+    "priority": "high",
+    "ordinal": 0,
+    "task_group_id": "ad357666-0218-44ce-a6be-48aeabce919c",
+    "parent_task_id": null,
+    "ai_result": null,
+    "id": "648f1ccf-2964-4e57-bac6-38d362f22a16",
+    "created_at": "2025-10-03T15:39:01.530551Z",
+    "user_id": "user_2qaB6nlVH3R9QXhQZpt1nmVDymN",
+    "subtasks": []
+  },
+  {
+    "title": "Add Visual Assets and Optimize Images",
+    "description": "Source, add, and optimize hero section imagery and visual assets to enhance the landing page appeal",
+    "details": "Add high-quality images to the `public/` directory that represent AI-powered e-commerce (e.g., AI-generated product images, modern storefront visuals, or abstract tech graphics). Optimize images for web performance using Next.js Image component with proper sizing, lazy loading, and format optimization. Consider adding a background gradient or pattern using Tailwind CSS utilities. Ensure all images have proper alt text for accessibility and are optimized for different screen densities (1x, 2x). Images should complement the AI-Shop brand and convey innovation and ease of use.",
+    "status": "pending",
+    "test_strategy": "Verify images load correctly across different devices and connection speeds. Test image optimization by checking network tab for proper format delivery (WebP when supported). Validate accessibility by ensuring all images have meaningful alt text and don't break screen reader navigation.",
+    "priority": "medium",
+    "ordinal": 1,
+    "task_group_id": "ad357666-0218-44ce-a6be-48aeabce919c",
+    "parent_task_id": null,
+    "ai_result": null,
+    "id": "c727ffdd-2069-46a3-bbf5-2473f66aff9d",
+    "created_at": "2025-10-03T15:39:01.530560Z",
+    "user_id": "user_2qaB6nlVH3R9QXhQZpt1nmVDymN",
+    "subtasks": []
+  },
+  {
+    "title": "Integrate Hero Section into Landing Page",
+    "description": "Replace existing landing page content with the new hero section component and ensure proper routing for CTA",
+    "details": "Modify `app/page.tsx` to import and render the new HeroSection component. Remove any existing placeholder content and ensure the hero section is the primary focal point of the landing page. Configure the CTA button to navigate to the appropriate route (likely `/sign-up` or `/dashboard` based on the user flow described in the PRD). Ensure the page maintains proper SEO metadata and page structure. Test that the integration works seamlessly with the existing layout component and doesn't break any existing functionality.",
+    "status": "pending",
+    "test_strategy": "Perform end-to-end testing to verify the landing page loads correctly, CTA navigation works as expected, and the page maintains proper SEO structure. Test across different browsers and devices to ensure consistent rendering. Validate that the page load time remains under 2 seconds as specified in the non-functional requirements.",
+    "priority": "high",
+    "ordinal": 2,
+    "task_group_id": "ad357666-0218-44ce-a6be-48aeabce919c",
+    "parent_task_id": null,
+    "ai_result": null,
+    "id": "19630af5-c1d8-488b-96fe-fc2b8712ff41",
+    "created_at": "2025-10-03T15:39:01.530562Z",
+    "user_id": "user_2qaB6nlVH3R9QXhQZpt1nmVDymN",
+    "subtasks": []
+  }
+]
