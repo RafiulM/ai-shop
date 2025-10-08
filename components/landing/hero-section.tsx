@@ -13,7 +13,10 @@ export function HeroSection({ className, onGetStarted, onWatchDemo }: HeroSectio
   return (
     <section className={`relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 ${className}`}>
       {/* Background Pattern */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#8882_1px,transparent_1px),linear-gradient(to_bottom,#8882_1px,transparent_1px)] bg-[size:14px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] animate-pulse" />
+      
+      {/* Additional Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-r from-blue-600/5 via-transparent to-purple-600/5 animate-pulse" />
       
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-32">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
@@ -67,17 +70,17 @@ export function HeroSection({ className, onGetStarted, onWatchDemo }: HeroSectio
             <div className="flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
               <Button 
                 size="lg" 
-                className="group px-8 py-6 text-lg font-semibold"
+                className="group px-8 py-6 text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-200"
                 onClick={onGetStarted}
               >
                 Get Started Now
-                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
+                <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform duration-200" />
               </Button>
               
               <Button 
                 variant="outline" 
                 size="lg" 
-                className="px-8 py-6 text-lg"
+                className="px-8 py-6 text-lg border-2 hover:bg-primary hover:text-primary-foreground transform hover:scale-105 transition-all duration-200"
                 onClick={onWatchDemo}
               >
                 Watch Demo
@@ -105,7 +108,7 @@ export function HeroSection({ className, onGetStarted, onWatchDemo }: HeroSectio
               <div className="absolute -bottom-10 -left-10 w-72 h-72 bg-gradient-to-br from-purple-400 to-pink-400 rounded-full blur-3xl opacity-20 animate-pulse delay-1000" />
               
               {/* Main Visual - AI Shop Dashboard Preview */}
-              <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transform rotate-1 hover:rotate-0 transition-all duration-500 hover:shadow-3xl">
+              <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 transform rotate-1 hover:rotate-0 hover:scale-105 transition-all duration-500 hover:shadow-3xl">
                 <div className="space-y-4">
                   {/* Browser Header */}
                   <div className="flex items-center gap-2 pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -155,11 +158,19 @@ export function HeroSection({ className, onGetStarted, onWatchDemo }: HeroSectio
                 </div>
                 
                 {/* Floating Elements */}
-                <div className="absolute -top-6 -left-6 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg animate-bounce">
+                <div className="absolute -top-6 -left-6 bg-gradient-to-r from-yellow-400 to-orange-400 text-white px-3 py-2 rounded-full text-sm font-medium shadow-lg animate-bounce hover:scale-110 transition-transform cursor-default">
                   ⚡ Live
                 </div>
-                <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-green-400 to-blue-400 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">
+                <div className="absolute -bottom-4 -right-4 bg-gradient-to-r from-green-400 to-blue-400 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg hover:scale-110 transition-transform cursor-default animate-pulse">
                   AI Powered ✨
+                </div>
+                
+                {/* New floating notification */}
+                <div className="absolute top-1/2 -left-4 transform -translate-y-1/2 bg-white dark:bg-gray-700 text-gray-900 dark:text-white px-3 py-2 rounded-lg shadow-xl border border-gray-200 dark:border-gray-600 hover:scale-105 transition-transform cursor-default">
+                  <div className="flex items-center gap-2 text-xs font-medium">
+                    <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                    <span>15 min setup</span>
+                  </div>
                 </div>
               </div>
               
