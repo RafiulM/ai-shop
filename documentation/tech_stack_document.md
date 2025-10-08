@@ -1,90 +1,132 @@
-# Tech Stack Document
+# Tech Stack Document for ai-shop
 
-This document explains the key technologies chosen for the **codeguide-starter** project. It’s written in everyday language so anyone—technical or not—can understand why each tool was picked and how it supports the application.
+This document outlines the technology choices for the ai-shop project in clear, everyday language. It explains why each tool or framework was chosen and how it helps deliver a smooth, reliable experience for both users and administrators.
 
 ## 1. Frontend Technologies
-The frontend is everything the user sees and interacts with. For this project, we’ve used:
 
-- **Next.js (App Router)**
-  - A React framework that makes page routing, server-side rendering, and API routes very simple.
-  - Enhances user experience by pre-rendering pages on the server or at build time, leading to faster initial load.
-- **React 18**
-  - The underlying library for building user interfaces with reusable components.
-  - Provides a smooth, interactive experience thanks to its virtual DOM and modern hooks.
+We built the shopping experience and admin interface using modern web tools that work together to deliver fast, interactive pages.
+
+- **React with Next.js (App Router)**
+  - Provides file-based routing: each folder maps to a URL, so adding pages is as easy as creating a new file.
+  - Supports Server-Side Rendering (SSR) and Static Site Generation (SSG) for fast load times and good search engine visibility.
 - **TypeScript**
-  - A superset of JavaScript that adds types (labels for data).
-  - Helps catch errors early during development and makes the code easier to maintain.
-- **CSS (globals.css & theme.css)**
-  - **globals.css** applies base styles (fonts, colors, resets) across the entire app.
-  - **dashboard/theme.css** defines the look and feel specific to the dashboard area.
-  - This separation keeps styles organized and avoids accidental style conflicts.
+  - Adds type checking on top of JavaScript to catch mistakes early and improve code readability.
+- **CSS (globals.css)**
+  - A global stylesheet for base styles that apply across the entire app (colors, fonts, spacing).
+  - We can also add CSS Modules or CSS-in-JS if we need scoped or dynamic styles in the future.
+- **Next/Image**
+  - Built-in image optimization component that automatically resizes and serves images in the most efficient format.
+- **React Hooks & Context API**
+  - Simplifies state management for things like user sessions or shopping cart data without heavy libraries.
 
-By combining these tools, we have a clear structure (Next.js folders for pages and layouts), safer code (TypeScript), and flexible styling with vanilla CSS.
+**How It Helps**
+
+- Users see pages load quickly because Next.js pre-renders content.
+- Developers can work in TypeScript to reduce runtime errors.
+- Styles stay organized with a global base and optional modular styling.
 
 ## 2. Backend Technologies
-The backend handles data, user accounts, and the logic behind the scenes. Our choices here are:
+
+The backend handles data storage, business logic, and API endpoints that power both the storefront and the admin dashboard.
 
 - **Next.js API Routes**
-  - Allows us to write server-side code (`route.ts` files) alongside our frontend in the same project.
-  - Runs on Node.js, so we can handle requests like sign-up, sign-in, and data fetching in one place.
-- **Node.js Runtime**
-  - The JavaScript environment on the server that executes our API routes.
-- **bcrypt** (npm package)
-  - A library for hashing passwords securely before storing them.
-  - Ensures that even if someone got access to our data, raw passwords aren’t visible.
-- **(Optional) NextAuth.js or JWT**
-  - While this starter kit shows a custom authentication flow, it can easily integrate services like NextAuth.js for email-based login or JWT (JSON Web Tokens) for stateless sessions.
+  - Serverless functions co-located with the frontend code under `/app/api`.
+  - Makes it easy to build RESTful endpoints for authentication, product management, and AI chat.
+- **Node.js & Express (under the hood)**
+  - Next.js API routes run on Node.js, giving us a familiar JavaScript environment on the server.
+- **TypeScript**
+  - Ensures type safety in API handlers and shared utility code.
+- **Database (PostgreSQL)**
+  - A reliable, structured database to store products, users, orders, and chat history.
+- **Prisma ORM**
+  - A type-safe database client that works seamlessly with PostgreSQL and TypeScript.
+- **NextAuth.js**
+  - Handles user registration, login, and session management with support for secure cookies and social/OAuth providers.
 
-These components work together to receive user credentials, verify or store them securely, manage sessions or tokens, and deliver protected data back to the frontend.
+**How It Helps**
+
+- API code lives next to the pages that call it, reducing context switching.
+- Prisma and TypeScript keep database code consistent and easy to refactor.
+- NextAuth.js provides battle-tested authentication flows without reinventing the wheel.
 
 ## 3. Infrastructure and Deployment
-Infrastructure covers where and how we host the app, as well as how changes get delivered:
 
-- **Git & GitHub**
-  - Version control system (Git) and remote hosting (GitHub) keep track of all code changes and allow team collaboration.
-- **Vercel (or Netlify)**
-  - A popular hosting service optimized for Next.js, with one-click deployments and global content delivery.
-  - Automatically rebuilds and deploys the site whenever code is pushed to the main branch.
-- **GitHub Actions (CI/CD)**
-  - Automates tasks like linting (ESLint), formatting (Prettier), and running any tests you add.
-  - Ensures that only clean, tested code goes live.
+We chose reliable platforms and workflows to keep the site online, deploy updates smoothly, and track changes over time.
 
-Together, these tools provide a reliable, scalable setup where every code change is tested and deployed quickly, with minimal manual work.
+- **Version Control (Git + GitHub)**
+  - All code is stored in a GitHub repository for collaboration, code reviews, and history tracking.
+- **Hosting & Deployment (Vercel)**
+  - Automatic deployments on every push to the main branch.
+  - Built-in support for Next.js features like SSR and API routes.
+- **CI/CD Pipeline (GitHub Actions)**
+  - Runs linting, type checks, and tests before merging code.
+  - Ensures only quality code reaches production.
+- **Environment Variables**
+  - Managed securely in Vercel (API keys, database URLs, secret tokens).
+
+**How It Helps**
+
+- New code goes live quickly with minimal manual steps.
+- Continuous checks catch errors before they reach users.
+- Secrets stay protected and never appear in the public codebase.
 
 ## 4. Third-Party Integrations
-While this starter kit is minimal by design, it already includes or can easily add:
 
-- **bcrypt**
-  - For secure password hashing (included as an npm dependency).
-- **NextAuth.js** (optional)
-  - A full-featured authentication library supporting email/password, OAuth, and more.
-- **Sentry or LogRocket** (optional)
-  - For real-time error tracking and performance monitoring in production.
+To add advanced features without building everything from scratch, we integrated a few external services.
 
-These integrations help extend the app’s capabilities without building every feature from scratch.
+- **OpenAI API**
+  - Powers the AI-driven chat feature for customer support and personalized recommendations.
+- **Stripe**
+  - Handles secure payment processing for orders (credit cards, digital wallets).
+- **Google Analytics**
+  - Gathers user behavior and traffic data to inform marketing and UX improvements.
+
+**How It Helps**
+
+- AI chat delivers smart responses without running our own language models.
+- Stripe ensures PCI-compliant payments with minimal setup.
+- Analytics data helps optimize the store and track business growth.
 
 ## 5. Security and Performance Considerations
-We’ve baked in several measures to keep users safe and the app running smoothly:
 
-Security:
-- Passwords are never stored in plain text—bcrypt hashes them with a random salt.
-- API routes can implement CSRF protection and input validation to block malicious requests.
-- Session tokens or cookies are marked secure and HttpOnly to prevent theft via JavaScript.
+We put safeguards and optimizations in place to protect user data and keep the site running smoothly.
 
-Performance:
-- Server-side rendering (SSR) and static site generation (SSG) in Next.js deliver pages faster.
-- Code splitting and lazy-loaded components ensure users only download what they need.
-- Global CSS and theme files are small and cached by the browser for quick repeat visits.
+### Security Measures
 
-These strategies work together to give users a fast, secure experience every time.
+- **HTTPS Everywhere**
+  - All connections are encrypted by default on Vercel.
+- **Authentication & Authorization**
+  - NextAuth.js with secure, HTTP-only cookies to store user sessions.
+  - Role-based access control to separate customer and admin areas.
+- **Input Validation**
+  - Sanitize and validate user input on both client and server to prevent XSS or injection attacks.
+- **Environment Variables**
+  - Secrets and API keys never exposed in the code or front-end bundles.
+
+### Performance Optimizations
+
+- **Server-Side Rendering & Static Generation**
+  - Delivers pre-built HTML to clients for faster initial load.
+- **Image Optimization**
+  - Next/Image automatically resizes and compresses images.
+- **Code Splitting & Lazy Loading**
+  - Only load JavaScript needed for the current page or feature.
+- **Database Indexing**
+  - Ensures product and user queries respond quickly even as data grows.
 
 ## 6. Conclusion and Overall Tech Stack Summary
-In building **codeguide-starter**, we chose technologies that:
 
-- Align with modern web standards (Next.js, React, TypeScript).
-- Provide a clear, file-based project structure for rapid onboarding.
-- Offer built-in support for server-side rendering, API routes, and static assets.
-- Emphasize security through password hashing, session management, and safe defaults.
-- Enable easy scaling and future enhancements via modular code and optional integrations.
+By combining Next.js, React, and TypeScript on the front end with serverless API routes, PostgreSQL with Prisma on the back end, and a smooth deployment pipeline on Vercel, ai-shop delivers:
 
-This stack strikes a balance between simplicity for newcomers and flexibility for experienced teams. It accelerates development of a secure authentication flow and a polished dashboard, while leaving room to plug in databases, test suites, and advanced features as the project grows.
+- **Fast, SEO-friendly storefront** with pre-rendered pages.
+- **Secure, robust backend** for user accounts, orders, and AI chat.
+- **Easy deployments and rollbacks** via Vercel and GitHub Actions.
+- **Scalability**: add new features as separate modules without major rewrites.
+
+Unique aspects:
+
+- Co-located API routes and pages in Next.js for maximum developer productivity.
+- Type-safe stack (TypeScript + Prisma) minimizes runtime errors.
+- Modular design that allows independent scaling of AI chat, payments, and analytics.
+
+These choices align perfectly with the goal of creating a modern, maintainable, and user-friendly AI-powered e-commerce platform.

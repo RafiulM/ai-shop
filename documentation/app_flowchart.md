@@ -1,14 +1,29 @@
 flowchart TD
-  Start[Landing Page]
-  SignUpPage[Sign Up Page]
-  SignInPage[Sign In Page]
-  AuthAPI[Authentication API Endpoint]
-  DashboardPage[Dashboard Page]
-  Start -->|Select Sign Up| SignUpPage
-  Start -->|Select Sign In| SignInPage
-  SignUpPage -->|Submit Credentials| AuthAPI
-  SignInPage -->|Submit Credentials| AuthAPI
-  AuthAPI -->|Success| DashboardPage
-  AuthAPI -->|Error| SignUpPage
-  AuthAPI -->|Error| SignInPage
-  DashboardPage -->|Click Logout| Start
+  Start[Start] --> Home[Open Home Page]
+  Home --> AuthCheck{User Authenticated}
+  AuthCheck -->|Yes| Products[View Product Listing]
+  AuthCheck -->|No| Products
+  Products --> ProductDetail[View Product Detail]
+  ProductDetail --> AddCart[Add Product to Cart]
+  AddCart --> Cart[View Cart]
+  Cart --> Checkout[Proceed to Checkout]
+  Checkout --> AuthCheck2{User Authenticated}
+  AuthCheck2 -->|Yes| Payment[Enter Payment Information]
+  AuthCheck2 -->|No| Login[Login or Signup]
+  Login --> Checkout
+  Payment --> Confirmation[Order Confirmation]
+  Confirmation --> End[End]
+
+  Home --> Chat[Open Chat Widget]
+  Chat --> ChatAPI[Call Chat Api]
+  ChatAPI --> ChatResponse[Receive Ai Response]
+  ChatResponse --> Chat
+
+  AdminEntry[Admin Section] --> AdminAuth{Admin Authenticated}
+  AdminAuth -->|Yes| AdminDash[Admin Dashboard]
+  AdminAuth -->|No| AdminLogin[Admin Login]
+  AdminLogin --> AdminAuth
+  AdminDash --> ManageProducts[Manage Products]
+  AdminDash --> ManageOrders[Manage Orders]
+  AdminDash --> Analytics[View Analytics]
+  AdminDash --> AdminEnd[End]

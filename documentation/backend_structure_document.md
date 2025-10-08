@@ -1,179 +1,212 @@
-# Backend Structure Document
+# ai-shop Backend Structure Document
 
-This document outlines the backend architecture, hosting, and infrastructure for the **codeguide-starter** project. It uses plain language so anyone can understand how the backend is set up and how it supports the application.
+This document outlines the backend setup for ai-shop, an AI-driven e-commerce platform. It covers architecture, databases, APIs, hosting, infrastructure, security, monitoring, and maintenance in clear, everyday language.
 
 ## 1. Backend Architecture
 
-- **Framework and Design Pattern**
-  - We use **Next.js API Routes** to handle all server-side logic. These routes live alongside the frontend code in the same repository, making development and deployment simpler.
-  - The backend follows a **layered pattern**:
-    1. **API Layer**: Receives requests (login, registration, data fetch).  
-    2. **Service Layer**: Contains the core business logic (user validation, password hashing).  
-    3. **Data Access Layer**: Talks to the database via a simple ORM (e.g., Prisma or TypeORM).
+The backend of ai-shop is built using Next.js API Routes, leveraging modern design patterns and frameworks to make the code easy to maintain, scale, and perform well.
 
-- **Scalability**
-  - Stateless API routes can scale horizontally—new instances can spin up on demand.  
-  - We can add caching or a message queue (e.g., Redis or RabbitMQ) without changing the core code.
+• Framework: Next.js (App Router) with file-based routing for API endpoints.
+• Language: TypeScript for type safety and clearer code.
+• Design Patterns:
+  - Modular structure: Each feature (auth, products, chat, admin) lives in its own folder.
+  - API-first approach: Frontend calls JSON endpoints under `/app/api`.
+  - Repository pattern (via ORM): Database interactions happen through a central layer (e.g., Prisma).
 
-- **Maintainability**
-  - Code for each feature is grouped by route (authentication, dashboard).  
-  - A service layer separates complex logic from request handling.
+Scalability & Performance:
+• Serverless endpoints scale automatically with traffic (hosted on Vercel).
+• Modular code lets teams work on separate features without conflicts.
+• TypeScript catches many errors early, reducing runtime bugs.
 
-- **Performance**
-  - Lightweight Node.js handlers keep response times low.  
-  - Future use of database connection pooling and Redis for caching repeated queries.
+Maintainability:
+• Co-located files (route handlers next to pages) simplify navigation.
+• Clear separation of concerns between UI, API logic, and data layer.
+• Consistent conventions (Next.js routing, Prisma schema) reduce configuration overhead.
 
 ## 2. Database Management
 
-- **Database Choice**
-  - We recommend **PostgreSQL** for structured data and reliable transactions.  
-  - In-memory caching can be added later with **Redis** for session tokens or frequently read data.
+ai-shop uses a relational database to store structured e-commerce data and an in-memory store for caching.
 
-- **Data Storage and Access**
-  - Use an ORM like **Prisma** or **TypeORM** to map JavaScript/TypeScript objects to database tables.
-  - Connection pooling ensures efficient use of database connections under load.
-  - Migrations track schema changes over time, keeping development, staging, and production in sync.
+• Primary Database:
+  - Type: SQL
+  - System: PostgreSQL (hosted on a managed service such as AWS RDS or Supabase)
+  - Access via Prisma ORM for type-safe queries and migrations.
 
-- **Data Practices**
-  - Passwords are never stored in plain text—they are salted and hashed with **bcrypt** before saving.
-  - All outgoing data is typed and validated to prevent malformed records.
+• Caching Layer:
+  - Type: In-memory key-value store
+  - System: Redis (hosted on AWS ElastiCache or a similar provider)
+  - Use cases: Session storage, rate limiting, product or recommendation caching.
+
+Data Practices:
+• Migrations managed through Prisma, ensuring versioned, repeatable schema changes.
+• Connection pooling configured for stable performance under load.
+• Backups scheduled daily with retention policies to prevent data loss.
 
 ## 3. Database Schema
 
-### Human-Readable Format
+Human-readable overview:
+• Users table: stores customer and admin profiles.
+• Products table: lists all items for sale.
+• Orders table: captures purchase transactions.
+• Order_Items table: links each order to its individual items.
+• Sessions table: holds authentication sessions (NextAuth.js).
+• Chat_Messages table: stores user chat history with the AI.
 
-- **Users**
-  - **id**: Unique identifier  
-  - **email**: User’s email address (unique)  
-  - **password_hash**: Securely hashed password  
-  - **created_at**: Account creation timestamp
+SQL Schema (PostgreSQL):
 
-- **Sessions**
-  - **id**: Unique session record  
-  - **user_id**: Links to a user  
-  - **token**: Random string for authentication  
-  - **expires_at**: When the token stops working  
-  - **created_at**: When the session was created
-
-- **DashboardItems** *(optional for dynamic data)*
-  - **id**: Unique record  
-  - **title**: Item title  
-  - **content**: Item details  
-  - **created_at**: When the item was added
-
-### SQL Schema (PostgreSQL)
 ```sql
--- Users table
+-- Users
 CREATE TABLE users (
   id SERIAL PRIMARY KEY,
   email VARCHAR(255) UNIQUE NOT NULL,
-  password_hash VARCHAR(255) NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
+  name VARCHAR(100),
+  hashed_password TEXT,
+  role VARCHAR(20) DEFAULT 'customer',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
 
--- Sessions table
+-- Products
+CREATE TABLE products (
+  id SERIAL PRIMARY KEY,
+  name VARCHAR(200) NOT NULL,
+  description TEXT,
+  price NUMERIC(10,2) NOT NULL,
+  image_url TEXT,
+  stock INT DEFAULT 0,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Orders
+CREATE TABLE orders (
+  id SERIAL PRIMARY KEY,
+  user_id INT REFERENCES users(id),
+  total_amount NUMERIC(10,2) NOT NULL,
+  status VARCHAR(50) DEFAULT 'pending',
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now(),
+  updated_at TIMESTAMP WITH TIME ZONE DEFAULT now()
+);
+
+-- Order Items
+CREATE TABLE order_items (
+  id SERIAL PRIMARY KEY,
+  order_id INT REFERENCES orders(id) ON DELETE CASCADE,
+  product_id INT REFERENCES products(id),
+  quantity INT NOT NULL,
+  unit_price NUMERIC(10,2) NOT NULL
+);
+
+-- Sessions (NextAuth.js)
 CREATE TABLE sessions (
   id SERIAL PRIMARY KEY,
-  user_id INT REFERENCES users(id) ON DELETE CASCADE,
-  token VARCHAR(255) UNIQUE NOT NULL,
-  expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ DEFAULT now()
+  session_token VARCHAR(255) UNIQUE NOT NULL,
+  user_id INT REFERENCES users(id),
+  expires TIMESTAMP WITH TIME ZONE NOT NULL
 );
 
--- Dashboard items table
-CREATE TABLE dashboard_items (
+-- Chat Messages
+CREATE TABLE chat_messages (
   id SERIAL PRIMARY KEY,
-  title TEXT NOT NULL,
-  content TEXT,
-  created_at TIMESTAMPTZ DEFAULT now()
+  user_id INT REFERENCES users(id),
+  message TEXT NOT NULL,
+  response TEXT,
+  created_at TIMESTAMP WITH TIME ZONE DEFAULT now()
 );
-```  
+```
 
 ## 4. API Design and Endpoints
 
-- **Approach**: We follow a **RESTful** style, grouping related endpoints under `/api` directories.
+ai-shop uses RESTful API routes built into Next.js. Each folder in `/app/api` corresponds to a feature.
 
-- **Key Endpoints**
-  - `POST /api/auth/register`  
-    • Accepts `{ email, password }`  
-    • Creates a new user and issues a session token  
-  - `POST /api/auth/login`  
-    • Accepts `{ email, password }`  
-    • Verifies credentials and returns a session token  
-  - `POST /api/auth/logout`  
-    • Invalidates the session token on the server  
-  - `GET /api/dashboard/data`  
-    • Requires a valid session  
-    • Returns user-specific data or dashboard items  
+• Authentication (`/app/api/auth/[...all]/route.ts`)
+  - Purpose: sign up, log in, log out, session refresh
+  - Flow: Receives credentials, interacts with Prisma to verify/store users, issues secure cookies or JWTs.
 
-- **Communication**
-  - Frontend sends JSON requests; backend replies with JSON and appropriate HTTP status codes.  
-  - Protected routes check for a valid session token (in cookies or Authorization header).
+• Products
+  - GET `/api/products`: List all products
+  - GET `/api/products/[id]`: Get details of one product
+  - POST `/api/products`: Create a new product (admin only)
+  - PUT `/api/products/[id]`: Update a product (admin only)
+  - DELETE `/api/products/[id]`: Remove a product (admin only)
+
+• Orders
+  - POST `/api/orders`: Create a new order (customer)
+  - GET `/api/orders/[id]`: Get order details (owner or admin)
+  - GET `/api/orders`: List user’s orders or all orders (admin)
+
+• Chat (`/app/api/chat/route.ts`)
+  - POST `/api/chat`: Send a user message to AI, store message & response
+
+• Dashboard Data
+  - GET `/api/dashboard/metrics`: Returns sales, active users, inventory stats
+
+APIs return JSON and use standard HTTP status codes (200, 201, 400, 401, 404, 500).
 
 ## 5. Hosting Solutions
 
-- **Cloud Provider**:  
-  - **Vercel** (recommended) offers seamless Next.js deployments, auto-scaling, and built-in CDN.  
-  - Alternatively, **Netlify** or any Node.js-capable host will work.
+• Primary Host: Vercel (leverages serverless functions for API routes)
+  - Benefits: automatic scaling, zero server management, global edge network
+• Database Host: AWS RDS (PostgreSQL) or Supabase
+  - Benefits: managed backups, high availability, read replicas
+• Cache Host: AWS ElastiCache (Redis)
+  - Benefits: low latency, automatic failover
 
-- **Benefits**
-  - **Reliability**: Global servers and failover across regions.  
-  - **Scalability**: Auto-scale serverless functions based on traffic.  
-  - **Cost-Effectiveness**: Pay-per-use model means low cost for small projects.
+This combination balances cost, reliability, and scalability, with minimal maintenance overhead.
 
 ## 6. Infrastructure Components
 
-- **Load Balancer**
-  - Provided by the hosting platform—distributes API requests across function instances.
+• Load Balancer: Managed by Vercel’s edge network, distributing API calls across serverless instances.
+• CDN: Vercel CDN delivers static assets (images, CSS, JS) from edge locations worldwide.
+• Caching:
+  - Redis for session tokens and rate limiting
+  - HTTP cache headers for static assets
+• Domain & SSL: Managed by Vercel with automatic SSL certificates from Let’s Encrypt.
+• CI/CD Pipeline: GitHub Actions runs tests, lints code, and deploys to Vercel on each merge.
 
-- **CDN (Content Delivery Network)**
-  - Vercel’s global edge network caches static assets (CSS, JS, images) for faster page loads.
-
-- **Caching**
-  - **Redis** (optional) for session storage or caching dashboard queries to reduce database load.
-
-- **Object Storage**
-  - For file uploads or backups, integrate with AWS S3 or similar services.
-
-- **Message Queue**
-  - In future, use **RabbitMQ** or **Kafka** for background tasks (e.g., email notifications).
+These components work together to deliver fast page loads, handle traffic spikes, and ensure high uptime.
 
 ## 7. Security Measures
 
-- **Authentication & Authorization**
-  - Passwords hashed with **bcrypt** and salted.  
-  - Session tokens stored in secure, HttpOnly cookies or Authorization headers.  
-  - Protected endpoints verify tokens before proceeding.
-
-- **Data Encryption**
-  - **HTTPS/TLS** encrypts data in transit.  
-  - Database connections use SSL to encrypt data between the app and the database.
-
-- **Input Validation**
-  - Every incoming request is validated (e.g., valid email format, password length) to prevent SQL injection or other attacks.
-
-- **Web Security Best Practices**
-  - Enable **CORS** policies to limit allowed origins.  
-  - Use **CSRF tokens** or same-site cookies to prevent cross-site requests.  
-  - Set secure headers with **Helmet** or a similar middleware.
+• Authentication & Authorization:
+  - NextAuth.js for secure sign-in flows and session management.
+  - Role-based access control (customer vs. admin).
+• Data Encryption:
+  - TLS for all data in transit (HTTPS enforced).
+  - At-rest encryption for the database (managed by RDS/Supabase).
+• Input Validation & Sanitization:
+  - Validate all incoming data on server side using schema validators.
+  - Prevent SQL injection and XSS attacks.
+• Secrets Management:
+  - Environment variables stored securely in Vercel and AWS Secrets Manager.
+• Rate Limiting:
+  - Redis-based rate limiting on API endpoints to mitigate abuse.
+• Regular Security Audits & Dependency Scans:
+  - Automated tools (e.g., Snyk) check for known vulnerabilities.
 
 ## 8. Monitoring and Maintenance
 
-- **Performance Monitoring**
-  - Integrate **Sentry** or **LogRocket** for real-time crash reporting and performance tracing.  
-  - Use Vercel’s built-in analytics to track request latencies and error rates.
-
-- **Logging**
-  - Structured logs (JSON) for all API requests and errors, shipped to a log management service like **Datadog** or **Logflare**.
-
-- **Health Checks**
-  - Define a `/health` endpoint that returns a 200 status if the service is up and the database is reachable.
-
-- **Maintenance Strategies**
-  - Automated migrations run on deploy to keep the database schema up to date.  
-  - Scheduled dependency audits and security scans (e.g., `npm audit`).
-  - Regular backups of the database (daily or weekly depending on usage).
+• Logging & Error Tracking:
+  - Sentry or Datadog for capturing runtime errors and performance issues.
+  - Structured logs (JSON) sent to a centralized logging service (e.g., AWS CloudWatch).
+• Performance Monitoring:
+  - Vercel Analytics for page load times and serverless function metrics.
+  - New Relic or Datadog APM for database query times and API latency.
+• Health Checks & Alerts:
+  - UptimeRobot or AWS CloudWatch alarms to notify on downtime.
+  - Slack or email alerts for critical errors or threshold breaches.
+• Maintenance:
+  - Scheduled database backups and test restores.
+  - Regular dependency updates via Dependabot or Renovate.
+  - Quarterly security reviews and penetration testing.
 
 ## 9. Conclusion and Overall Backend Summary
 
-The backend for **codeguide-starter** is built on Next.js API Routes and Node.js, paired with PostgreSQL for data and optional Redis for caching. It follows a clear layered architecture that keeps code easy to maintain and extend. With RESTful endpoints for authentication and data, secure practices like password hashing and HTTPS, and hosting on Vercel for scalability and global performance, this setup meets the project’s goals for a fast, secure, and developer-friendly foundation. Future enhancements—such as background job queues, advanced monitoring, or richer data models—can be added without disrupting the core structure.
+The ai-shop backend is built for clarity, reliability, and growth. By combining Next.js API Routes, TypeScript, and Prisma with managed services (PostgreSQL, Redis, Vercel), the platform delivers a robust e-commerce experience. Key strengths:
+
+• Modular, API-first architecture ensures clean separation of concerns.
+• Serverless hosting and managed databases minimize operational burden.
+• Comprehensive security and monitoring guard user data and system health.
+• Scalability is built in at every layer—from serverless functions to managed database replicas.
+
+This setup aligns with ai-shop’s goals of a modern, AI-enhanced online store that can grow seamlessly, maintain high performance, and offer a secure experience for customers and administrators alike.
